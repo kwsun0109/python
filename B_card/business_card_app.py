@@ -2,6 +2,9 @@ from flask import Flask, render_template_string, request, redirect, url_for
 import json
 import os
 import re
+import webbrowser
+import threading
+import sys
 
 app = Flask(__name__)
 DATA_FILE = "business_cards.json"
@@ -24,24 +27,20 @@ def save_cards(cards):
 def format_phone_number(phone):
     if not phone:
         return ""
-    # 숫자만 추출
     nums = re.sub(r'[^0-9]', '', phone)
     
-    # 서울 지역번호(02)인 경우
     if nums.startswith('02'):
-        if len(nums) == 9: # 02-XXX-XXXX
+        if len(nums) == 9:
             return f"{nums[:2]}-{nums[2:5]}-{nums[5:]}"
-        elif len(nums) == 10: # 02-XXXX-XXXX
+        elif len(nums) == 10:
             return f"{nums[:2]}-{nums[2:6]}-{nums[6:]}"
-    # 일반 휴대폰 및 기타 지역번호 (010, 031 등)
-    elif len(nums) == 8: # 1588-XXXX 등
+    elif len(nums) == 8:
         return f"{nums[:4]}-{nums[4:]}"
-    elif len(nums) == 10: # 031-XXX-XXXX 등
+    elif len(nums) == 10:
         return f"{nums[:3]}-{nums[3:6]}-{nums[6:]}"
-    elif len(nums) == 11: # 010-XXXX-XXXX 등
+    elif len(nums) == 11:
         return f"{nums[:3]}-{nums[3:7]}-{nums[7:]}"
     
-    # 규칙에 맞지 않으면 원본 반환
     return phone
 
 HTML_TEMPLATE = """
@@ -93,7 +92,7 @@ HTML_TEMPLATE = """
             <!-- 실시간 검색창 -->
             <div class="w-full sm:w-72">
                 <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="🔍 현재 페이지에서 검색..." 
-                    class="w-full px-4 py-2.5 bg-white border border-slate-200/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm transition">
+                    class="w-full px-4 py-2.5 bg-white border border-slate-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 shadow-sm transition">
             </div>
         </header>
 
@@ -106,28 +105,28 @@ HTML_TEMPLATE = """
                 </h2>
                 <form action="/add" method="POST" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">이름 *</label>
-                        <input type="text" name="name" required placeholder="예: 홍길동" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">이름 *</label>
+                        <input type="text" name="name" required placeholder="예: 홍길동" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">회사명</label>
-                        <input type="text" name="company" placeholder="예: (주)테크솔루션" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">회사명</label>
+                        <input type="text" name="company" placeholder="예: (주)테크솔루션" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">직책</label>
-                        <input type="text" name="title" placeholder="예: 대표이사 / 매니저" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">직책</label>
+                        <input type="text" name="title" placeholder="예: 대표이사 / 매니저" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">개인 연락처 * <span class="text-[10px] text-blue-600 font-normal">(자동 하이픈)</span></label>
-                        <input type="text" name="phone" required placeholder="예: 01012345678" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">개인 연락처 * <span class="text-[10px] text-blue-600 font-normal">(자동 하이픈)</span></label>
+                        <input type="text" name="phone" required placeholder="예: 01012345678" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">직장 연락처 <span class="text-[10px] text-blue-600 font-normal">(자동 하이픈)</span></label>
-                        <input type="text" name="office_phone" placeholder="예: 025558888" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">직장 연락처 <span class="text-[10px] text-blue-600 font-normal">(자동 하이픈)</span></label>
+                        <input type="text" name="office_phone" placeholder="예: 025558888" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1.5">이메일</label>
-                        <input type="email" name="email" placeholder="예: example@email.com" class="w-full px-4 py-2.5 text-sm bg-slate-50/50 border border-slate-200/80 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 transition">
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">이메일</label>
+                        <input type="email" name="email" placeholder="예: example@email.com" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition">
                     </div>
                     <button type="submit" class="w-full mt-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-blue-600/20">
                         명함 안전하게 저장하기
@@ -171,12 +170,12 @@ HTML_TEMPLATE = """
                             <div id="edit-mode-{{ actual_index }}" class="hidden">
                                 <h3 class="font-bold text-slate-900 text-sm mb-3 pb-2 border-b border-slate-100">✏️ 명함 정보 수정</h3>
                                 <form action="/update/{{ actual_index }}" method="POST" class="space-y-2.5">
-                                    <input type="text" name="name" value="{{ card.name }}" required class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
-                                    <input type="text" name="company" value="{{ card.company }}" placeholder="회사명" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
-                                    <input type="text" name="title" value="{{ card.title }}" placeholder="직책" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
-                                    <input type="text" name="phone" value="{{ card.phone }}" required placeholder="개인 연락처" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
-                                    <input type="text" name="office_phone" value="{{ card.office_phone if card.office_phone else '' }}" placeholder="직장 연락처" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
-                                    <input type="email" name="email" value="{{ card.email }}" placeholder="이메일" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200/80 rounded-lg">
+                                    <input type="text" name="name" value="{{ card.name }}" required class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
+                                    <input type="text" name="company" value="{{ card.company }}" placeholder="회사명" class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
+                                    <input type="text" name="title" value="{{ card.title }}" placeholder="직책" class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
+                                    <input type="text" name="phone" value="{{ card.phone }}" required placeholder="개인 연락처" class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
+                                    <input type="text" name="office_phone" value="{{ card.office_phone if card.office_phone else '' }}" placeholder="직장 연락처" class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
+                                    <input type="email" name="email" value="{{ card.email }}" placeholder="이메일" class="w-full px-3 py-2 text-xs bg-white border border-slate-400 rounded-lg">
                                     
                                     <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
                                         <button type="submit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold">저장</button>
@@ -250,11 +249,8 @@ def add_card():
     name = request.form.get('name', '').strip()
     company = request.form.get('company', '').strip()
     title = request.form.get('title', '').strip()
-    
-    # 입력받은 번호에 자동 하이픈 적용
     phone = format_phone_number(request.form.get('phone', '').strip())
     office_phone = format_phone_number(request.form.get('office_phone', '').strip())
-    
     email = request.form.get('email', '').strip()
 
     if not name or not phone:
@@ -301,4 +297,25 @@ def update_card(index):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    print("=" * 60)
+    print(" 🚀 [인맥 명함 지갑 웹 프로그램]이 안전하게 구동 중입니다...")
+    print(" 웹 브라우저를 자동으로 실행하는 중입니다. 잠시만 기다려주세요.")
+    print(" 프로그램을 종료하려면 키보드의 [Ctrl + C]를 눌러주세요.")
+    print("=" * 60)
+
+    # 브라우저 자동 오픈 스레드
+    def open_browser():
+        webbrowser.open("http://127.0.0.1:5000")
+
+    threading.Timer(0.8, open_browser).start()
+    
+    try:
+        # 플라스크 서버 실행 (디버그 모드를 끄고 깔끔하게 실행)
+        app.run(host='127.0.0.1', port=5000, debug=False)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("\n" + "=" * 60)
+        print(" 🛑 프로그램이 안전하게 종료되었습니다. 이용해 주셔서 감사합니다!")
+        print("=" * 60)
+        sys.exit(0)
