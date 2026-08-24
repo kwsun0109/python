@@ -1,0 +1,183 @@
+
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>모바일 실시간 속보 TOP 10</title>
+        <style>
+            * { box-sizing: border-box; }
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+                background-color: #f0f2f5; 
+                margin: 0; 
+                padding: 10px; 
+            }
+            .container { 
+                max-width: 600px; 
+                margin: 0 auto; 
+                background: white; 
+                padding: 15px; 
+                border-radius: 12px; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            }
+            h1 { 
+                color: #1a1a1a; 
+                text-align: center; 
+                font-size: 20px; 
+                margin-bottom: 5px; 
+            }
+            .subtitle { 
+                text-align: center; 
+                color: #666; 
+                font-size: 12px; 
+                margin-bottom: 20px; 
+            }
+            .news-item { 
+                padding: 12px 5px; 
+                border-bottom: 1px solid #eee; 
+                display: flex; 
+                flex-direction: column;
+                gap: 6px;
+            }
+            .news-item:last-child { border-bottom: none; }
+            .news-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .rank { 
+                font-weight: bold; 
+                color: #e74c3c; 
+                font-size: 16px; 
+                min-width: 20px; 
+            }
+            .press { 
+                background: #007aff; 
+                color: white; 
+                padding: 2px 6px; 
+                border-radius: 4px; 
+                font-size: 11px; 
+                font-weight: bold; 
+            }
+            .title a { 
+                text-decoration: none; 
+                color: #222; 
+                font-size: 14px; 
+                font-weight: 500; 
+                line-height: 1.4;
+                display: block;
+                word-break: keep-all;
+            }
+            .title a:active { color: #007aff; }
+            
+            /* 하단 에러 로그 스타일 */
+            .error-section { 
+                margin-top: 25px; 
+                padding-top: 15px; 
+                border-top: 1px dashed #ddd; 
+                color: #888; 
+            }
+            .error-section h3 { font-size: 11px; color: #e67e22; margin-bottom: 5px; }
+            .error-section ul { font-size: 10px; padding-left: 15px; line-height: 1.4; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚨 모바일 실시간 속보 TOP 10</h1>
+            <div class="subtitle">2026년 08월 24일 09시 34분 기준 (중복 배제 완료)</div>
+            <div class="news-list">
+    
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">1</span>
+                        <span class="press">SBS</span>
+                    </div>
+                    <div class="title"><a href="https://news.sbs.co.kr/news/endPage.do?news_id=N1008717590" target="_blank">방사청-LIG D&A의 '검찰 수사 부정' 한목소리…이심전심할 처지인가 [취재파일]</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">2</span>
+                        <span class="press">조선일보</span>
+                    </div>
+                    <div class="title"><a href="https://www.chosun.com/kid/kid_economy/2026/08/21/3JVY4MXQTND7XHRXNHCSYALYQA/" target="_blank">라부부 케이크에 인형 넣었더니 매출이 ‘껑충’</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">3</span>
+                        <span class="press">동아일보</span>
+                    </div>
+                    <div class="title"><a href="https://www.donga.com/news/Entertainment/article/all/20260824/134529383/1" target="_blank">지예은, 첫 주식 투자 수익률은…“마이너스 47%”</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">4</span>
+                        <span class="press">머니투데이</span>
+                    </div>
+                    <div class="title"><a href="https://www.mt.co.kr/tech/2026/08/24/2026082409163738559" target="_blank">&quot;연구비 1억원 보장&quot; &#039;신입&#039; 이공계 &#039;박사&#039; 38명 뽑는다</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">5</span>
+                        <span class="press">연합뉴스</span>
+                    </div>
+                    <div class="title"><a href="https://www.yna.co.kr/view/AKR20260824031600002" target="_blank">[게시판] 디지털엑스, 원화마켓 전 종목 수수료 1년 무료</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">6</span>
+                        <span class="press">한겨레</span>
+                    </div>
+                    <div class="title"><a href="https://www.hani.co.kr/arti/economy/economy_general/1274265.html" target="_blank">올 상반기 비만치료제 위고비·마운자로 불법 반입 3.5배 늘었다</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">7</span>
+                        <span class="press">경향신문</span>
+                    </div>
+                    <div class="title"><a href="https://www.khan.co.kr/article/202608240909001/?utm_source=khan_rss&utm_medium=rss&utm_campaign=total_news" target="_blank">시리아, 미 중재로 이스라엘과 회담···긴장 완화와 안보 협정 재개 위해</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">8</span>
+                        <span class="press">매일경제</span>
+                    </div>
+                    <div class="title"><a href="https://www.mk.co.kr/news/stock/12134399" target="_blank">호르무즈보다 더 큰 공포가 온다... 미국이 디젤에 주목하는 이유</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">9</span>
+                        <span class="press">SBS</span>
+                    </div>
+                    <div class="title"><a href="https://news.sbs.co.kr/news/endPage.do?news_id=N1008717540" target="_blank">[취재파일] 트럼프의 올 가을 러브콜…김정은은 '하노이'를 넘을까</a></div>
+                </div>
+        
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="rank">10</span>
+                        <span class="press">SBS</span>
+                    </div>
+                    <div class="title"><a href="https://news.sbs.co.kr/news/endPage.do?news_id=N1008718179" target="_blank">이 대통령 지지도, 40.2%로 최저치 경신…민주 41.9%·국힘 37.6%</a></div>
+                </div>
+        
+            </div>
+            
+        <div class="error-section">
+            <h3>⚠️ 수집 실패 또는 점검 중인 언론사</h3>
+            <ul>
+                <li><b>KBS</b>: 데이터 없음 또는 접근 거부</li><li><b>MBC</b>: 데이터 없음 또는 접근 거부</li><li><b>중앙일보</b>: 데이터 없음 또는 접근 거부</li><li><b>아시아경제</b>: Remote end closed connection without response</li><li><b>이데일리</b>: 데이터 없음 또는 접근 거부</li><li><b>한국경제</b>: 데이터 없음 또는 접근 거부</li><li><b>서울신문</b>: 데이터 없음 또는 접근 거부</li>
+            </ul>
+        </div>
+        
+        </div>
+    </body>
+    </html>
+    
